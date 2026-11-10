@@ -1,70 +1,21 @@
-<script>
-  (function() {
-    const dictionary = {
-      '登录': 'Login',
-      '注册': 'Register',
-      '首页': 'Home',
-      '发帖': 'New Post',
-      '版块': 'Categories',
-      '全部': 'All',
-      '评论': 'Comments',
-      '点赞': 'Like',
-      '我的': 'Profile',
-      '设置': 'Settings',
-      '退出': 'Logout',
-      '管理员': 'Admin',
-      '标题': 'Title',
-      '内容': 'Content',
-      '发布': 'Publish',
-      '取消': 'Cancel',
-      '确认': 'Confirm',
-      '用户名': 'Username',
-      '密码': 'Password',
-      '邮箱': 'Email Address',
-      '验证码': 'Verification Code',
-      '搜索': 'Search',
-      '关于': 'About',
-      '用户': 'User',
-      '帖子': 'Posts',
-      '回复': 'Reply'
-    };
-
-    function translateText(str) {
-      let updated = str;
-      for (const [key, value] of Object.entries(dictionary)) {
-        if (updated.includes(key)) {
-          updated = updated.replaceAll(key, value);
-        }
-      }
-      return updated;
-    }
-
-    function processNode(node) {
-      if (node.nodeType === Node.TEXT_NODE) {
-        const trimmed = node.nodeValue.trim();
-        if (trimmed) {
-          const translated = translateText(node.nodeValue);
-          if (translated !== node.nodeValue) {
-            node.nodeValue = translated;
-          }
-        }
-      } else if (node.childNodes) {
-        for (let i = 0; i < node.childNodes.length; i++) {
-          processNode(node.childNodes[i]);
-        }
-      }
-    }
-
-    // Set up an aggressive, continuous check on the app root
-    const observer = new MutationObserver((mutations) => {
-      observer.disconnect(); // Prevent infinite loops during replacement
-      processNode(document.body);
-      observer.observe(document.body, { childList: true, subtree: true, characterData: true });
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CForum</title>
+  
+  <!-- This script automatically triggers browser translation features instantly -->
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+      // Changes the structural language to English right before rendering completes
+      setTimeout(() => {
+        document.documentElement.lang = 'en';
+      }, 500);
     });
-
-    window.addEventListener('load', () => {
-      processNode(document.body);
-      observer.observe(document.body, { childList: true, subtree: true, characterData: true });
-    });
-  })();
-</script>
+  </script>
+</head>
+<body>
+  <div id="root"></div>
+</body>
+</html>
