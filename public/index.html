@@ -21,40 +21,50 @@
       '用户名': 'Username',
       '密码': 'Password',
       '邮箱': 'Email Address',
-      '验证码': 'Verification Code'
+      '验证码': 'Verification Code',
+      '搜索': 'Search',
+      '关于': 'About',
+      '用户': 'User',
+      '帖子': 'Posts',
+      '回复': 'Reply'
     };
 
-    function translateNode(node) {
+    function translateText(str) {
+      let updated = str;
+      for (const [key, value] of Object.entries(dictionary)) {
+        if (updated.includes(key)) {
+          updated = updated.replaceAll(key, value);
+        }
+      }
+      return updated;
+    }
+
+    function processNode(node) {
       if (node.nodeType === Node.TEXT_NODE) {
-        let text = node.nodeValue.trim();
-        if (dictionary[text]) {
-          node.nodeValue = dictionary[text];
-        } else {
-          // Fallback matching for partial text blocks
-          for (let key in dictionary) {
-            if (node.nodeValue.includes(key)) {
-              node.nodeValue = node.nodeValue.replaceAll(key, dictionary[key]);
-            }
+        const trimmed = node.nodeValue.trim();
+        if (trimmed) {
+          const translated = translateText(node.nodeValue);
+          if (translated !== node.nodeValue) {
+            node.nodeValue = translated;
           }
         }
-      } else {
-        for (let child of node.childNodes) {
-          translateNode(child);
+      } else if (node.childNodes) {
+        for (let i = 0; i < node.childNodes.length; i++) {
+          processNode(node.childNodes[i]);
         }
       }
     }
 
+    // Set up an aggressive, continuous check on the app root
     const observer = new MutationObserver((mutations) => {
-      mutations.forEach((mutation) => {
-        mutation.addedNodes.forEach((node) => {
-          translateNode(node);
-        });
-      });
+      observer.disconnect(); // Prevent infinite loops during replacement
+      processNode(document.body);
+      observer.observe(document.body, { childList: true, subtree: true, characterData: true });
     });
 
-    window.addEventListener('DOMContentLoaded', () => {
-      translateNode(document.body);
-      observer.observe(document.body, { childList: true, subtree: true });
+    window.addEventListener('load', () => {
+      processNode(document.body);
+      observer.observe(document.body, { childList: true, subtree: true, characterData: true });
     });
   })();
 </script>
