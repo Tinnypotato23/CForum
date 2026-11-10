@@ -1,23 +1,60 @@
-<!doctype html>
-<html lang="zh-CN">
-	<head>
-		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<meta name="referrer" content="no-referrer" />
-		<title>CForum - by AdySec</title>
-		<script type="module" crossorigin src="/assets/index-BqrxQT2U.js"></script>
-		<link rel="modulepreload" crossorigin href="/assets/api-B-HZFCeq.js">
-		<link rel="modulepreload" crossorigin href="/assets/turnstile-w4P-7_qW.js">
-		<link rel="modulepreload" crossorigin href="/assets/page-shell-BZ_fPLch.js">
-		<link rel="modulepreload" crossorigin href="/assets/label-UrJRVHqK.js">
-		<link rel="modulepreload" crossorigin href="/assets/markdown-BtIIwH0t.js">
-		<link rel="modulepreload" crossorigin href="/assets/validators-BPggKWnM.js">
-		<link rel="modulepreload" crossorigin href="/assets/x-BHbWtRAC.js">
-		<link rel="modulepreload" crossorigin href="/assets/refresh-cw-ClcLVP1x.js">
-		<link rel="stylesheet" crossorigin href="/assets/api-CzDvUcPd.css">
-	</head>
-	<body>
-		<div id="root"></div>
-	</body>
-</html>
+<script>
+  (function() {
+    const dictionary = {
+      '登录': 'Login',
+      '注册': 'Register',
+      '首页': 'Home',
+      '发帖': 'New Post',
+      '版块': 'Categories',
+      '全部': 'All',
+      '评论': 'Comments',
+      '点赞': 'Like',
+      '我的': 'Profile',
+      '设置': 'Settings',
+      '退出': 'Logout',
+      '管理员': 'Admin',
+      '标题': 'Title',
+      '内容': 'Content',
+      '发布': 'Publish',
+      '取消': 'Cancel',
+      '确认': 'Confirm',
+      '用户名': 'Username',
+      '密码': 'Password',
+      '邮箱': 'Email Address',
+      '验证码': 'Verification Code'
+    };
 
+    function translateNode(node) {
+      if (node.nodeType === Node.TEXT_NODE) {
+        let text = node.nodeValue.trim();
+        if (dictionary[text]) {
+          node.nodeValue = dictionary[text];
+        } else {
+          // Fallback matching for partial text blocks
+          for (let key in dictionary) {
+            if (node.nodeValue.includes(key)) {
+              node.nodeValue = node.nodeValue.replaceAll(key, dictionary[key]);
+            }
+          }
+        }
+      } else {
+        for (let child of node.childNodes) {
+          translateNode(child);
+        }
+      }
+    }
+
+    const observer = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        mutation.addedNodes.forEach((node) => {
+          translateNode(node);
+        });
+      });
+    });
+
+    window.addEventListener('DOMContentLoaded', () => {
+      translateNode(document.body);
+      observer.observe(document.body, { childList: true, subtree: true });
+    });
+  })();
+</script>
